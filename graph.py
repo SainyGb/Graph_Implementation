@@ -1,0 +1,102 @@
+# Adjacenccy Matrix
+#from tabulate import tabulate
+
+
+class Graph_Adjacent_Matrix():
+
+    def __init__(self, size):
+        self.adjacent_matrix = []
+        for i in range(size):
+            self.adjacent_matrix.append([0 for i in range(size)])
+        self.size = size
+
+    def add_link(self, vertex1, vertex2):
+        self.adjacent_matrix[vertex1][vertex2] = 1
+        #self.adjacent_matrix[vertex2][vertex1] = 1
+
+    def remove_link(self, vertex1, vertex2):
+        if self.adjacent_matrix[vertex1][vertex2] == 0:
+            print(f"There are no links of {vertex1} to {vertex2}")
+            return
+        print(f"Removing links between vertex {vertex1} and vertex {vertex2}")
+        self.adjacent_matrix[vertex1][vertex2] = 0
+        #self.adjacent_matrix[vertex2][vertex1] = 0
+
+    def print_vertex_amount(self):
+        print(f"There are {self.size} vertex")
+
+    def print_links_amount(self):
+        count = 0
+        for row in self.adjacent_matrix:
+            for value in row:
+                if value == 1:
+                    count += 1
+        print(f"There are {count} links")
+
+    def print_vertex_links(self, vertex):
+        count = []
+        for row_index, row in enumerate(self.adjacent_matrix):
+            if row_index == vertex:
+                for value_index, value in enumerate(row):
+                    if value == 1:
+                        count.append(f"vertex {value_index}")
+        print(f"Vertex {vertex} has {len(count)} links")
+        print(f"They are with: {count}")
+
+    def print_matrix(self):
+        for number_of_row, row in enumerate(self.adjacent_matrix):
+            print(number_of_row, row)
+
+    # def print_pretty_matrix(self):
+    #     table = {}
+    #     for number_of_row, row in enumerate(self.adjacent_matrix):
+    #         table[f"vertex {number_of_row}"] = row
+    #     print(tabulate(table, headers="keys",
+    #           showindex=table.keys(), tablefmt="fancy_outline"))
+
+
+class Graph_Adjacent_List():
+
+    def __init__(self, size):
+        self.adjacent_list = {}
+        for i in range(size):
+            self.adjacent_list[f"vertex {i}"] = []
+        self.size = size
+
+    def add_link(self, vertex1, vertex2):
+        # if vertex1 == vertex2:
+        #     self.adjacent_list[f"vertex {vertex1}"].append(vertex2)
+        #     return
+        self.adjacent_list[f"vertex {vertex1}"].append(vertex2)
+        #self.adjacent_list[f"vertex {vertex2}"].append(vertex1)
+
+    def remove_link(self, vertex1, vertex2):
+        if vertex1 not in self.adjacent_list[f"vertex {vertex2}"]:
+            print(f"There are no links of {vertex1} to {vertex2}")
+            return
+        print(f"Removing links between vertex {vertex1} and vertex {vertex2}")
+        # if vertex1 == vertex2:
+        #     self.adjacent_list[f"vertex {vertex1}"].remove(vertex2)
+        #     return
+        self.adjacent_list[f"vertex {vertex1}"].remove(vertex2)
+        #self.adjacent_list[f"vertex {vertex2}"].remove(vertex1)
+
+    def print_vertex(self):
+        print(
+            f"There are {len(self.adjacent_list.keys())} Vertex \n" +
+            f"They are: {list(self.adjacent_list.keys())}"
+        )
+
+    def print_links(self):
+        print(
+            f"There are {len([(key, value) for key in self.adjacent_list.keys() for value in self.adjacent_list[key]])} Links \n" +
+            f"They are {[(key, value) for key in self.adjacent_list.keys() for value in self.adjacent_list[key]]}"
+        )
+
+    def print_lists(self):
+        print(self.adjacent_list)
+
+    def print_vertex_links(self, vertex):
+        print(
+            f"Vertex {vertex} has {len(self.adjacent_list[f'vertex {vertex}'])} links")
+        print(f"They are with: {self.adjacent_list[f'vertex {vertex}']}")
