@@ -94,26 +94,60 @@ class Graph_Adjacent_List():
     def __init__(self, size):
         self.adjacent_list = {}
         for i in range(size):
-            self.adjacent_list[f"vertex {i}"] = []
+            self.adjacent_list[i] = []
         self.size = size
 
     def add_link(self, vertex1, vertex2):
         # if vertex1 == vertex2:
         #     self.adjacent_list[f"vertex {vertex1}"].append(vertex2)
         #     return
-        self.adjacent_list[f"vertex {vertex1}"].append(vertex2)
+        self.adjacent_list[vertex1].append(vertex2)
         #self.adjacent_list[f"vertex {vertex2}"].append(vertex1)
 
     def remove_link(self, vertex1, vertex2):
-        if vertex1 not in self.adjacent_list[f"vertex {vertex2}"]:
+        if vertex1 not in self.adjacent_list[vertex2]:
             print(f"There are no links of {vertex1} to {vertex2}")
             return
         print(f"Removing links between vertex {vertex1} and vertex {vertex2}")
         # if vertex1 == vertex2:
         #     self.adjacent_list[f"vertex {vertex1}"].remove(vertex2)
         #     return
-        self.adjacent_list[f"vertex {vertex1}"].remove(vertex2)
+        self.adjacent_list[vertex1].remove(vertex2)
         #self.adjacent_list[f"vertex {vertex2}"].remove(vertex1)
+
+    def DFS(self):
+        visited = set()
+        antecessors = {}
+        vertex_times = {}
+        time = 0
+        for vertex in self.adjacent_list:
+            if vertex not in visited:
+                time = self.DFS_Aux(vertex=vertex, visited=visited,
+                                    time=time, antecessors=antecessors, vertex_times=vertex_times)
+        print(antecessors)
+        print(vertex_times)
+        print(visited)
+
+    def DFS_Aux(self, vertex, visited, antecessors, time, vertex_times):
+        visited.add(vertex)
+
+        time += 1
+        vertex_times[vertex] = [f"init in {time}"]
+
+        if vertex in antecessors.keys():
+            print(
+                f"Time: {time} | Vertex: {vertex} | Antecessor: { antecessors[vertex]}")
+        else:
+            print(f"Time: {time} | Vertex: {vertex} | Antecessor: {None}")
+
+        for neighbor in self.adjacent_list[vertex]:
+            if neighbor not in visited:
+                antecessors[neighbor] = vertex
+                time = self.DFS_Aux(vertex=neighbor,
+                                    visited=visited, antecessors=antecessors, time=time, vertex_times=vertex_times)
+        time += 1
+        vertex_times[vertex].append(f"finalized in {time}")
+        return time
 
     def print_vertex(self):
         print(
@@ -132,5 +166,5 @@ class Graph_Adjacent_List():
 
     def print_vertex_links(self, vertex):
         print(
-            f"Vertex {vertex} has {len(self.adjacent_list[f'vertex {vertex}'])} links")
-        print(f"They are with: {self.adjacent_list[f'vertex {vertex}']}")
+            f"Vertex {vertex} has {len(self.adjacent_list[vertex])} links")
+        print(f"They are with: {self.adjacent_list[vertex]}")
