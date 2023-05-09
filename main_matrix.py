@@ -33,6 +33,7 @@ def main_matrix():
     print()
     simple_graph_using_matrix.print_vertex_links(0)
     print()
+    simple_graph_using_matrix.DFS()
 
 
 if __name__ == '__main__':

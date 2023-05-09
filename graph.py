@@ -22,6 +22,40 @@ class Graph_Adjacent_Matrix():
         self.adjacent_matrix[vertex1][vertex2] = 0
         #self.adjacent_matrix[vertex2][vertex1] = 0
 
+    def DFS(self):
+        visited = set()
+        antecessors = {}
+        vertex_times = {}
+        time = 0
+        for vertex, _ in enumerate(self.adjacent_matrix):
+            if vertex not in visited:
+                time = self.DFS_Aux(vertex=vertex, visited=visited,
+                                    time=time, antecessors=antecessors, vertex_times=vertex_times)
+        print(antecessors)
+        print(vertex_times)
+        print(visited)
+
+    def DFS_Aux(self, vertex, visited, antecessors, time, vertex_times):
+        visited.add(vertex)
+
+        time += 1
+        vertex_times[vertex] = [f"init in {time}"]
+
+        if vertex in antecessors.keys():
+            print(
+                f"Time: {time} | Vertex: {vertex} | Antecessor: { antecessors[vertex]}")
+        else:
+            print(f"Time: {time} | Vertex: {vertex} | Antecessor: {None}")
+
+        for possible_neighbor, exist in enumerate(self.adjacent_matrix[vertex]):
+            if exist == 1 and possible_neighbor not in visited:
+                antecessors[possible_neighbor] = vertex
+                time = self.DFS_Aux(vertex=possible_neighbor,
+                                    visited=visited, antecessors=antecessors, time=time, vertex_times=vertex_times)
+        time += 1
+        vertex_times[vertex].append(f"finalized in {time}")
+        return time
+
     def print_vertex_amount(self):
         print(f"There are {self.size} vertex")
 
