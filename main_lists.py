@@ -30,6 +30,7 @@ def main_lists():
     print()
     simple_graph_using_lists.print_vertex_links(0)
     print()
+    simple_graph_using_lists.BFS(0)
     simple_graph_using_lists.DFS()
 
 

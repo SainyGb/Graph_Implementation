@@ -27,6 +27,9 @@ class Graph_Adjacent_Matrix():
         antecessors = {}
         vertex_times = {}
         time = 0
+
+        print("Passing through the graph using DFS")
+
         for vertex, _ in enumerate(self.adjacent_matrix):
             if vertex not in visited:
                 time = self.DFS_Aux(vertex=vertex, visited=visited,
@@ -34,6 +37,7 @@ class Graph_Adjacent_Matrix():
         print(antecessors)
         print(vertex_times)
         print(visited)
+        print()
 
     def DFS_Aux(self, vertex, visited, antecessors, time, vertex_times):
         visited.add(vertex)
@@ -55,6 +59,37 @@ class Graph_Adjacent_Matrix():
         time += 1
         vertex_times[vertex].append(f"finalized in {time}")
         return time
+
+    def BFS(self, init_vertex):
+        visited = set()
+        antecessors = {}
+        vertex_distances = {}
+        print("Passing through the graph using BFS")
+
+        for vertex, _ in enumerate(self.adjacent_matrix):
+            vertex_distances[vertex] = 0
+            antecessors[vertex] = None
+
+        visited.add(init_vertex)
+        stack = []
+        stack.append(init_vertex)
+
+        # self.print_matrix()
+        print(
+            f"Initial Vertex: {init_vertex} | Distance: {vertex_distances[init_vertex]} | Antecessor: {antecessors[init_vertex]}")
+
+        while len(stack) != 0:
+            first_vertex_stack = stack.pop(0)
+            for possible_neighbor, exist in enumerate(self.adjacent_matrix[first_vertex_stack]):
+                if exist == 1 and possible_neighbor not in visited:
+                    visited.add(possible_neighbor)
+                    vertex_distances[possible_neighbor] = vertex_distances[first_vertex_stack] + 1
+                    antecessors[possible_neighbor] = first_vertex_stack
+                    stack.append(possible_neighbor)
+
+                    print(
+                        f"Vertex: {possible_neighbor} | Distance: {vertex_distances[possible_neighbor]} | Antecessor: {antecessors[possible_neighbor]}")
+        print()
 
     def print_vertex_amount(self):
         print(f"There are {self.size} vertex")
@@ -120,6 +155,9 @@ class Graph_Adjacent_List():
         antecessors = {}
         vertex_times = {}
         time = 0
+
+        print("Passing through the graph using DFS")
+
         for vertex in self.adjacent_list:
             if vertex not in visited:
                 time = self.DFS_Aux(vertex=vertex, visited=visited,
@@ -127,6 +165,7 @@ class Graph_Adjacent_List():
         print(antecessors)
         print(vertex_times)
         print(visited)
+        print()
 
     def DFS_Aux(self, vertex, visited, antecessors, time, vertex_times):
         visited.add(vertex)
@@ -148,6 +187,37 @@ class Graph_Adjacent_List():
         time += 1
         vertex_times[vertex].append(f"finalized in {time}")
         return time
+
+    def BFS(self, init_vertex):
+        visited = set()
+        antecessors = {}
+        vertex_distances = {}
+        print("Passing through the graph using BFS")
+
+        for vertex in self.adjacent_list:
+            vertex_distances[vertex] = 0
+            antecessors[vertex] = None
+
+        visited.add(init_vertex)
+        stack = []
+        stack.append(init_vertex)
+
+        # self.print_matrix()
+        print(
+            f"Initial Vertex: {init_vertex} | Distance: {vertex_distances[init_vertex]} | Antecessor: {antecessors[init_vertex]}")
+
+        while len(stack) != 0:
+            first_vertex_stack = stack.pop(0)
+            for neighbor in self.adjacent_list[first_vertex_stack]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    vertex_distances[neighbor] = vertex_distances[first_vertex_stack] + 1
+                    antecessors[neighbor] = first_vertex_stack
+                    stack.append(neighbor)
+
+                    print(
+                        f"Vertex: {neighbor} | Distance: {vertex_distances[neighbor]} | Antecessor: {antecessors[neighbor]}")
+        print()
 
     def print_vertex(self):
         print(
