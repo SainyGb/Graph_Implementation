@@ -1,4 +1,4 @@
-from graph import Graph_Adjacent_Matrix
+from adjacent_matrix import Graph_Adjacent_Matrix
 
 
 def main_matrix():

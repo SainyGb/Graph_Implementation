@@ -1,4 +1,4 @@
-from graph import Graph_Adjacent_List
+from adjacent_list import Graph_Adjacent_List
 
 
 def main_lists():
