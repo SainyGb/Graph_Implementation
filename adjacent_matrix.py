@@ -10,6 +10,9 @@ class Graph_Adjacent_Matrix():
         self.weighted = weighted
         self.adjacent_matrix = []
         self.vertex_list = []
+        self.edges_list = []
+        self.vertex_distances = []
+        self.vertex_antecessors = []
 
         for idx in range(vertex_number):
             self.vertex_list.append(Vertex(idx).label)
@@ -29,39 +32,48 @@ class Graph_Adjacent_Matrix():
         if self.weighted:
             if self.bigraph:
                 self.adjacent_matrix[vertex1][vertex2] = weight
+                self.edges_list.append((vertex1, vertex2))
                 return
             self.adjacent_matrix[vertex1][vertex2] = weight
             self.adjacent_matrix[vertex2][vertex1] = weight
+            self.edges_list.append((vertex1, vertex2))
+            self.edges_list.append((vertex2, vertex1))
             return
 
         # if not weighted graphs
         if self.bigraph:
             self.adjacent_matrix[vertex1][vertex2] = 1
+            self.edges_list.append((vertex1, vertex2))
             return
         self.adjacent_matrix[vertex1][vertex2] = 1
         self.adjacent_matrix[vertex2][vertex1] = 1
+        self.edges_list.append((vertex1, vertex2))
+        self.edges_list.append((vertex2, vertex1))
         return
 
     def remove_link(self, vertex1, vertex2):
-        if not self.weighted:
-            if self.bigraph:
-                if self.adjacent_matrix[vertex1][vertex2] == 0:
-                    print(f"There are no links of {vertex1} to {vertex2}")
-                    return
-                print(
-                    f"Removing links between vertex {vertex1} and vertex {vertex2}")
-                self.adjacent_matrix[vertex1][vertex2] = 0
-                return
+        # if not self.weighted:
+        #     if self.bigraph:
+        #         if self.adjacent_matrix[vertex1][vertex2] == 0:
+        #             print(f"There are no links of {vertex1} to {vertex2}")
+        #             return
+        #         print(
+        #             f"Removing links between vertex {vertex1} and vertex {vertex2}")
+        #         self.edges_list.remove((vertex1, vertex2))
+        #         self.adjacent_matrix[vertex1][vertex2] = 0
+        #         return
 
-            # if not bigraph
-            if self.adjacent_matrix[vertex1][vertex2] == 0:
-                print(f"There are no links of {vertex1} to {vertex2}")
-                return
-            print(
-                f"Removing links between vertex {vertex1} and vertex {vertex2}")
-            self.adjacent_matrix[vertex1][vertex2] = 0
-            self.adjacent_matrix[vertex2][vertex1] = 0
-            return
+        #     # if not bigraph
+        #     if self.adjacent_matrix[vertex1][vertex2] == 0:
+        #         print(f"There are no links of {vertex1} to {vertex2}")
+        #         return
+        #     print(
+        #         f"Removing links between vertex {vertex1} and vertex {vertex2}")
+        #     self.adjacent_matrix[vertex1][vertex2] = 0
+        #     self.adjacent_matrix[vertex2][vertex1] = 0
+        #     self.edges_list.remove((vertex1, vertex2))
+        #     self.edges_list.remove((vertex2, vertex1))
+        #     return
 
         # if weighted
         if self.bigraph:
@@ -71,6 +83,7 @@ class Graph_Adjacent_Matrix():
             print(
                 f"Removing links between vertex {vertex1} and vertex {vertex2}")
             self.adjacent_matrix[vertex1][vertex2] = None
+            self.edges_list.remove((vertex1, vertex2))
             return
 
         # if not bigraph
@@ -81,6 +94,8 @@ class Graph_Adjacent_Matrix():
             f"Removing links between vertex {vertex1} and vertex {vertex2}")
         self.adjacent_matrix[vertex1][vertex2] = None
         self.adjacent_matrix[vertex2][vertex1] = None
+        self.edges_list.remove((vertex1, vertex2))
+        self.edges_list.remove((vertex2, vertex1))
         return
 
     def DFS(self):
@@ -122,9 +137,10 @@ class Graph_Adjacent_Matrix():
         return time
 
     def BFS(self, init_vertex):
-        visited = set()
         antecessors = {}
         vertex_distances = {}
+
+        visited = set()
         print("Passing through the graph using BFS")
 
         for vertex, _ in enumerate(self.adjacent_matrix):
@@ -153,9 +169,9 @@ class Graph_Adjacent_Matrix():
         print()
 
     def dijkstra(self, source_vertex):
-        vertex_distances = [inf for vertex in self.vertex_list]
-        vertex_antecessors = [None for vertex in self.vertex_list]
-        vertex_distances[source_vertex] = 0
+        self.vertex_distances = [inf for vertex in self.vertex_list]
+        self.vertex_antecessors = [None for vertex in self.vertex_list]
+        self.vertex_distances[source_vertex] = 0
 
         vertex_list = self.vertex_list[:]
         print(
@@ -165,30 +181,65 @@ class Graph_Adjacent_Matrix():
         while vertex_list:
             min_vertex = vertex_list.pop(vertex_list.index(min(vertex_list)))
             for neighbor in self.get_vertex_links(min_vertex):
-                # do Relax(min_vertex, neighbor, weight)
-                if vertex_distances[neighbor] > vertex_distances[min_vertex] + self.adjacent_matrix[min_vertex][neighbor]:
-                    vertex_distances[neighbor] = vertex_distances[min_vertex] + \
-                        self.adjacent_matrix[min_vertex][neighbor]
-                    vertex_antecessors[neighbor] = min_vertex
-                    print(
-                        f"Vertex: {neighbor} | Distance from Vertex {source_vertex}: {vertex_distances[neighbor]} | Antecessor: {vertex_antecessors[neighbor]}")
+                self.relax(min_vertex, neighbor)
+                # if vertex_distances[neighbor] > vertex_distances[min_vertex] + self.adjacent_matrix[min_vertex][neighbor]:
+                #     vertex_distances[neighbor] = vertex_distances[min_vertex] + \
+                #         self.adjacent_matrix[min_vertex][neighbor]
+                #     vertex_antecessors[neighbor] = min_vertex
+                print(
+                    f"Vertex: {neighbor} | Distance from Vertex {source_vertex}: {self.vertex_distances[neighbor]} | Antecessor: {self.vertex_antecessors[neighbor]}")
 
     def bellman_ford(self, source_vertex):
-        vertex_distances = [inf for vertex in self.vertex_list]
-        vertex_antecessors = [None for vertex in self.vertex_list]
-        vertex_distances[source_vertex] = 0
+        self.vertex_distances = [inf for vertex in self.vertex_list]
+        self.vertex_antecessors = [None for vertex in self.vertex_list]
+        self.vertex_distances[source_vertex] = 0
 
         for _ in range(len(self.vertex_list)-1):
-            for edge in self.get_links_list():
-                # do Relax(min_vertex, neighbor, weight)
-                if vertex_distances[edge[1]] > vertex_distances[edge[0]] + self.adjacent_matrix[edge[0]][edge[1]]:
-                    vertex_distances[edge[1]] = vertex_distances[edge[0]] + \
-                        self.adjacent_matrix[edge[0]][edge[1]]
-                    vertex_antecessors[edge[1]] = edge[0]
-        for edge in self.get_links_list():
-            if vertex_distances[edge[1]] > vertex_distances[edge[0]] + self.adjacent_matrix[edge[0]][edge[1]]:
+            for edge in self.edges_list:
+                self.relax(edge[0], edge[1])
+                # if vertex_distances[edge[1]] > vertex_distances[edge[0]] + self.adjacent_matrix[edge[0]][edge[1]]:
+                #     vertex_distances[edge[1]] = vertex_distances[edge[0]] + \
+                #         self.adjacent_matrix[edge[0]][edge[1]]
+                #     vertex_antecessors[edge[1]] = edge[0]
+        for edge in self.edges_list:
+            if self.vertex_distances[edge[1]] > self.vertex_distances[edge[0]] + self.adjacent_matrix[edge[0]][edge[1]]:
                 return True
         return False
+
+    def floyd_warshall(self):
+        self.vertex_distances = [inf for vertex in self.vertex_list]
+        self.vertex_antecessors = [None for vertex in self.vertex_list]
+
+        aux_matrix = self.adjacent_matrix[:]
+
+        for row_idx, row in enumerate(aux_matrix):
+            for col_idx, value in enumerate(row):
+                if row_idx == col_idx:
+                    aux_matrix[row_idx][col_idx] = 0
+                elif value is None:
+                    aux_matrix[row_idx][col_idx] = inf
+
+        for number_of_row, row in enumerate(aux_matrix):
+            print(number_of_row, row)
+
+        for k, _ in enumerate(aux_matrix):
+            for v, _ in enumerate(aux_matrix):
+                for aux, _ in enumerate(aux_matrix):
+                    if aux_matrix[k][aux] is not None and aux_matrix[v][k] is not None:
+                        if (aux_matrix[v][k] + aux_matrix[k][aux] < aux_matrix[v][aux]):
+                            aux_matrix[v][aux] = aux_matrix[v][k] + \
+                                aux_matrix[k][aux]
+                            self.vertex_antecessors[aux] = k
+        print()
+        for number_of_row, row in enumerate(aux_matrix):
+            print(number_of_row, row)
+        print(self.vertex_antecessors)
+
+    def relax(self, vertex1, vertex2):
+        if self.vertex_distances[vertex2] > self.vertex_distances[vertex1] + self.adjacent_matrix[vertex1][vertex2]:
+            self.vertex_distances[vertex2] = self.vertex_distances[vertex1] + \
+                self.adjacent_matrix[vertex1][vertex2]
+            self.vertex_antecessors[vertex2] = vertex1
 
     def get_vertex_links(self, vertex):
         count = []
@@ -208,54 +259,13 @@ class Graph_Adjacent_Matrix():
                             count.append(value_index)
             return count
 
-    def get_links_list(self):
-        count = 0
-        links_list = []
-        list_of_connections = set()
-        if not self.weighted:
-            if self.bigraph:
-                for row_idx, row in enumerate(self.adjacent_matrix):
-                    for col_idx, value in enumerate(row):
-                        if value == 1:
-                            links_list.append((row_idx, col_idx))
-                return links_list
-
-            # if not bigraphs
-
-            for row_idx, row in enumerate(self.adjacent_matrix):
-                for col_idx, value in enumerate(row):
-                    if value == 1 and ((row_idx, col_idx) and (col_idx, row_idx)) not in list_of_connections:
-                        count += 1
-                        list_of_connections.add((row_idx, col_idx))
-                        list_of_connections.add((col_idx, row_idx))
-                        links_list.append((row_idx, col_idx))
-                        links_list.append((col_idx, row_idx))
-            return links_list
-
-        # if weighted
-        if self.bigraph:
-            for row_idx, row in enumerate(self.adjacent_matrix):
-                for col_idx, value in enumerate(row):
-                    if value:
-                        links_list.append((row_idx, col_idx))
-            return links_list
-
-        # if not bigraphs
-        for row_idx, row in enumerate(self.adjacent_matrix):
-            for col_idx, value in enumerate(row):
-                if value and ((row_idx, col_idx) and (col_idx, row_idx)) not in list_of_connections:
-                    count += 1
-                    list_of_connections.add((row_idx, col_idx))
-                    list_of_connections.add((col_idx, row_idx))
-                    links_list.append((row_idx, col_idx))
-                    links_list.append((col_idx, row_idx))
-        return links_list
-
     def print_vertex_amount(self):
         print(f"There are {self.vertex_number} vertex")
 
     def print_links_amount(self):
         count = 0
+        list_of_connections = set()
+
         if not self.weighted:
             if self.bigraph:
                 for row in self.adjacent_matrix:
@@ -266,7 +276,6 @@ class Graph_Adjacent_Matrix():
                 return
 
             # if not bigraphs
-            list_of_connections = set()
 
             for row_idx, row in enumerate(self.adjacent_matrix):
                 for col_idx, value in enumerate(row):
@@ -286,7 +295,6 @@ class Graph_Adjacent_Matrix():
             return
 
         # if not bigraphs
-        list_of_connections = set()
 
         for row_idx, row in enumerate(self.adjacent_matrix):
             for col_idx, value in enumerate(row):
