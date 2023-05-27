@@ -173,6 +173,84 @@ class Graph_Adjacent_Matrix():
                     print(
                         f"Vertex: {neighbor} | Distance from Vertex {source_vertex}: {vertex_distances[neighbor]} | Antecessor: {vertex_antecessors[neighbor]}")
 
+    def bellman_ford(self, source_vertex):
+        vertex_distances = [inf for vertex in self.vertex_list]
+        vertex_antecessors = [None for vertex in self.vertex_list]
+        vertex_distances[source_vertex] = 0
+
+        for _ in range(len(self.vertex_list)-1):
+            for edge in self.get_links_list():
+                # do Relax(min_vertex, neighbor, weight)
+                if vertex_distances[edge[1]] > vertex_distances[edge[0]] + self.adjacent_matrix[edge[0]][edge[1]]:
+                    vertex_distances[edge[1]] = vertex_distances[edge[0]] + \
+                        self.adjacent_matrix[edge[0]][edge[1]]
+                    vertex_antecessors[edge[1]] = edge[0]
+        for edge in self.get_links_list():
+            if vertex_distances[edge[1]] > vertex_distances[edge[0]] + self.adjacent_matrix[edge[0]][edge[1]]:
+                return True
+        return False
+
+    def get_vertex_links(self, vertex):
+        count = []
+
+        if self.weighted:
+            for row_index, row in enumerate(self.adjacent_matrix):
+                if row_index == vertex:
+                    for value_index, value in enumerate(row):
+                        if value:
+                            count.append(value_index)
+            return count
+        else:
+            for row_index, row in enumerate(self.adjacent_matrix):
+                if row_index == vertex:
+                    for value_index, value in enumerate(row):
+                        if value == 1:
+                            count.append(value_index)
+            return count
+
+    def get_links_list(self):
+        count = 0
+        links_list = []
+        list_of_connections = set()
+        if not self.weighted:
+            if self.bigraph:
+                for row_idx, row in enumerate(self.adjacent_matrix):
+                    for col_idx, value in enumerate(row):
+                        if value == 1:
+                            links_list.append((row_idx, col_idx))
+                return links_list
+
+            # if not bigraphs
+
+            for row_idx, row in enumerate(self.adjacent_matrix):
+                for col_idx, value in enumerate(row):
+                    if value == 1 and ((row_idx, col_idx) and (col_idx, row_idx)) not in list_of_connections:
+                        count += 1
+                        list_of_connections.add((row_idx, col_idx))
+                        list_of_connections.add((col_idx, row_idx))
+                        links_list.append((row_idx, col_idx))
+                        links_list.append((col_idx, row_idx))
+            return links_list
+
+        # if weighted
+        if self.bigraph:
+            for row_idx, row in enumerate(self.adjacent_matrix):
+                for col_idx, value in enumerate(row):
+                    if value:
+                        links_list.append((row_idx, col_idx))
+            return links_list
+
+        # if not bigraphs
+        for row_idx, row in enumerate(self.adjacent_matrix):
+            for col_idx, value in enumerate(row):
+                if value and ((row_idx, col_idx) and (col_idx, row_idx)) not in list_of_connections:
+                    count += 1
+                    list_of_connections.add((row_idx, col_idx))
+                    list_of_connections.add((col_idx, row_idx))
+                    links_list.append((row_idx, col_idx))
+                    links_list.append((col_idx, row_idx))
+        return links_list
+
     def print_vertex_amount(self):
         print(f"There are {self.vertex_number} vertex")
 
@@ -238,24 +316,6 @@ class Graph_Adjacent_Matrix():
                             count.append(value_index)
             print(f"Vertex {vertex} has {len(count)} links")
             print(f"They are with: {count}")
-            return count
-
-    def get_vertex_links(self, vertex):
-        count = []
-
-        if self.weighted:
-            for row_index, row in enumerate(self.adjacent_matrix):
-                if row_index == vertex:
-                    for value_index, value in enumerate(row):
-                        if value:
-                            count.append(value_index)
-            return count
-        else:
-            for row_index, row in enumerate(self.adjacent_matrix):
-                if row_index == vertex:
-                    for value_index, value in enumerate(row):
-                        if value == 1:
-                            count.append(value_index)
             return count
 
     def print_matrix(self):

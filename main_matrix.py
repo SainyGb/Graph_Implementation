@@ -40,8 +40,9 @@ def teste1():
 def teste2():
     simple_graph_using_matrix = Graph_Adjacent_Matrix(
         3, bigraph=False, weighted=True)
-    simple_graph_using_matrix.add_link(0, 2, 5)
+    simple_graph_using_matrix.add_link(0, 2, -5)
     simple_graph_using_matrix.add_link(2, 1, 3)
+    simple_graph_using_matrix.add_link(0, 1, 2)
 
     # simple_graph_using_matrix.print_pretty_matrix()
     simple_graph_using_matrix.print_matrix()
@@ -69,6 +70,7 @@ def teste2():
     simple_graph_using_matrix.BFS(0)
     simple_graph_using_matrix.DFS()
     simple_graph_using_matrix.dijkstra(0)
+    print(simple_graph_using_matrix.bellman_ford(0))
 
 
 if __name__ == '__main__':
