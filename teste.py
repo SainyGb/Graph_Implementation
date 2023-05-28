@@ -1,1 +1,1 @@
-from vertex import Vertex
+print(1 and None)

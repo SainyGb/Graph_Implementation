@@ -197,10 +197,6 @@ class Graph_Adjacent_Matrix():
         for _ in range(len(self.vertex_list)-1):
             for edge in self.edges_list:
                 self.relax(edge[0], edge[1])
-                # if vertex_distances[edge[1]] > vertex_distances[edge[0]] + self.adjacent_matrix[edge[0]][edge[1]]:
-                #     vertex_distances[edge[1]] = vertex_distances[edge[0]] + \
-                #         self.adjacent_matrix[edge[0]][edge[1]]
-                #     vertex_antecessors[edge[1]] = edge[0]
         for edge in self.edges_list:
             if self.vertex_distances[edge[1]] > self.vertex_distances[edge[0]] + self.adjacent_matrix[edge[0]][edge[1]]:
                 return True
@@ -219,9 +215,6 @@ class Graph_Adjacent_Matrix():
                 elif value is None:
                     aux_matrix[row_idx][col_idx] = inf
 
-        for number_of_row, row in enumerate(aux_matrix):
-            print(number_of_row, row)
-
         for k, _ in enumerate(aux_matrix):
             for v, _ in enumerate(aux_matrix):
                 for aux, _ in enumerate(aux_matrix):
@@ -234,6 +227,21 @@ class Graph_Adjacent_Matrix():
         for number_of_row, row in enumerate(aux_matrix):
             print(number_of_row, row)
         print(self.vertex_antecessors)
+        for vertex, antecessor in enumerate(self.vertex_antecessors):
+           # print(
+            #  f"Vertex: {vertex} | Shortest : {self.vertex_antecessors[neighbor]}")
+            pass
+
+    def transitive_closure(self):
+        closure_matrix = self.adjacent_matrix[:]
+        for k, _ in enumerate(closure_matrix):
+            for i, _ in enumerate(closure_matrix):
+                for j, _ in enumerate(closure_matrix):
+                    closure_matrix[i][j] = closure_matrix[i][j] or (
+                        closure_matrix[i][k] and closure_matrix[k][j])
+
+        for number_of_row, row in enumerate(closure_matrix):
+            print(number_of_row, row)
 
     def relax(self, vertex1, vertex2):
         if self.vertex_distances[vertex2] > self.vertex_distances[vertex1] + self.adjacent_matrix[vertex1][vertex2]:
