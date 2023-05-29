@@ -4,29 +4,48 @@
 
 class Graph_Adjacent_List():
 
-    def __init__(self, size):
+    def __init__(self, size, bigraph=True, weighted=False):
         self.adjacent_list = {}
+        self.bigraph = bigraph
+        self.weighted = weighted
+        self.edge_weights = {}
+        
         for i in range(size):
             self.adjacent_list[i] = []
+                
         self.size = size
 
-    def add_link(self, vertex1, vertex2):
-        # if vertex1 == vertex2:
-        #     self.adjacent_list[f"vertex {vertex1}"].append(vertex2)
-        #     return
-        self.adjacent_list[vertex1].append(vertex2)
-        #self.adjacent_list[f"vertex {vertex2}"].append(vertex1)
+    def add_link(self, vertex1, vertex2, weight=None):
+        if self.bigraph and not self.weighted:
+            self.adjacent_list[vertex1].append(vertex2)
+            return
+        if not self.bigraph and not self.weighted:
+            self.adjacent_list[vertex1].append(vertex2)
+            self.adjacent_list[vertex2].append(vertex1)
+            return
+        
+        if self.weighted:   
+            if self.bigraph:
+                self.adjacent_list[vertex1].append(vertex2)
+                self.edge_weights[(vertex1, vertex2)] = weight
+                return
+            if not self.bigraph:
+                self.adjacent_list[vertex1].append(vertex2)
+                self.adjacent_list[vertex2].append(vertex2)
+                return
+        
+
 
     def remove_link(self, vertex1, vertex2):
         if vertex1 not in self.adjacent_list[vertex2]:
             print(f"There are no links of {vertex1} to {vertex2}")
             return
         print(f"Removing links between vertex {vertex1} and vertex {vertex2}")
-        # if vertex1 == vertex2:
-        #     self.adjacent_list[f"vertex {vertex1}"].remove(vertex2)
-        #     return
+        if self.bigraph:
+            self.adjacent_list[vertex1].remove(vertex2)
+            self.adjacent_list[vertex2].remove(vertex1)
+            return
         self.adjacent_list[vertex1].remove(vertex2)
-        #self.adjacent_list[f"vertex {vertex2}"].remove(vertex1)
 
     def DFS(self):
         visited = set()
