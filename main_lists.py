@@ -35,10 +35,12 @@ def teste1():
 
 
 def teste2():
-    simple_graph_using_lists = Graph_Adjacent_List(4, weighted=True)
+    simple_graph_using_lists = Graph_Adjacent_List(
+        4, bigraph=False, weighted=True)
     simple_graph_using_lists.print_lists()
     simple_graph_using_lists.add_link(0, 1, 2)
     simple_graph_using_lists.add_link(1, 2, 3)
+    simple_graph_using_lists.add_link(0, 2, 4)
     simple_graph_using_lists.print_lists()
     simple_graph_using_lists.DFS()
     print(simple_graph_using_lists.edge_weights)

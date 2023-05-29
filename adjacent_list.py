@@ -35,7 +35,7 @@ class Graph_Adjacent_List():
                 return
             if not self.bigraph:
                 self.adjacent_list[vertex1].append(vertex2)
-                self.adjacent_list[vertex2].append(vertex2)
+                self.adjacent_list[vertex2].append(vertex1)
 
                 self.edge_weights[(vertex1, vertex2)] = weight
                 self.edge_weights[(vertex2, vertex1)] = weight
@@ -145,6 +145,9 @@ class Graph_Adjacent_List():
             [None for _, _ in enumerate(self.adjacent_list.keys())]
         self.vertex_distances[source_vertex] = 0
 
+        visited = set()
+        visited.add(source_vertex)
+
         queue = []
         heapq.heappush(queue, (0, source_vertex))
 
@@ -155,10 +158,13 @@ class Graph_Adjacent_List():
         while queue:
             weight_min_vertex, min_vertex = heapq.heappop(queue)
             for neighbor in self.adjacent_list[min_vertex]:
-                relax = self.relax(min_vertex, neighbor)
-                heapq.heappush(queue, (self.vertex_distances[relax], relax))
-                print(
-                    f"Vertex: {neighbor} | Distance from Vertex {source_vertex}: {self.vertex_distances[neighbor]} | Antecessor: {self.vertex_antecessors[neighbor]}")
+                if neighbor not in visited:
+                    relax = self.relax(min_vertex, neighbor)
+                    heapq.heappush(
+                        queue, (self.vertex_distances[relax], relax))
+                    visited.add(neighbor)
+                    print(
+                        f"Vertex: {neighbor} | Distance from Vertex {source_vertex}: {self.vertex_distances[neighbor]} | Antecessor: {self.vertex_antecessors[neighbor]}")
 
     def relax(self, vertex1, vertex2):
         if self.vertex_distances[vertex2] > self.vertex_distances[vertex1] + self.edge_weights[(vertex1, vertex2)]:
