@@ -32,14 +32,18 @@ def teste1():
     print()
     simple_graph_using_lists.BFS(0)
     simple_graph_using_lists.DFS()
-    
+
+
 def teste2():
     simple_graph_using_lists = Graph_Adjacent_List(4, weighted=True)
     simple_graph_using_lists.print_lists()
     simple_graph_using_lists.add_link(0, 1, 2)
-    simple_graph_using_lists.add_link(2,1,3)
+    simple_graph_using_lists.add_link(1, 2, 3)
     simple_graph_using_lists.print_lists()
-    simple_graph_using_lists.BFS(0)
+    simple_graph_using_lists.DFS()
+    print(simple_graph_using_lists.edge_weights)
+    simple_graph_using_lists.dijkstra(0)
+
 
 if __name__ == '__main__':
     teste2()
