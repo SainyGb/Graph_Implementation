@@ -164,7 +164,8 @@ class Graph_Adjacent_List():
                         queue, (self.vertex_distances[relax], relax))
                     visited.add(neighbor)
                     print(
-                        f"Vertex: {neighbor} | Distance from Vertex {source_vertex}: {self.vertex_distances[neighbor]} | Antecessor: {self.vertex_antecessors[neighbor]}")
+                        f"Vertex: {neighbor} | Distance from Vertex {source_vertex}: {self.vertex_distances[neighbor]} |" +
+                        "Antecessor: {self.vertex_antecessors[neighbor]}")
 
     def relax(self, vertex1, vertex2):
         if self.vertex_distances[vertex2] > self.vertex_distances[vertex1] + self.edge_weights[(vertex1, vertex2)]:
@@ -185,6 +186,36 @@ class Graph_Adjacent_List():
             if self.vertex_distances[edge[1]] > self.vertex_distances[edge[0]] + self.edge_weights[(edge[0], edge[1])]:
                 return True
         return False
+
+    def floyd_warshall(self):
+        self.vertex_distances = [inf for vertex in self.adjacent_list]
+        self.vertex_antecessors = [None for vertex in self.adjacent_list]
+
+        aux_matrix = [[] for row in self.adjacent_list]
+
+        for row_idx, _ in enumerate(self.adjacent_list):
+            for col_idx, _ in enumerate(self.adjacent_list):
+                if row_idx == col_idx:
+                    aux_matrix[row_idx].append(0)
+                elif (row_idx, col_idx) in self.edge_weights:
+                    aux_matrix[row_idx].append(self.edge_weights[
+                        (row_idx, col_idx)])
+                else:
+                    aux_matrix[row_idx].append(inf)
+
+        for number_of_row, row in enumerate(aux_matrix):
+            print(number_of_row, row)
+        print()
+
+        for k, _ in enumerate(aux_matrix):
+            for i, _ in enumerate(aux_matrix):
+                for j, _ in enumerate(aux_matrix):
+                    aux_matrix[i][j] = min(aux_matrix[i][j], aux_matrix[i][k] +
+                                           aux_matrix[k][j])
+                    self.vertex_antecessors[j] = k
+
+        for number_of_row, row in enumerate(aux_matrix):
+            print(number_of_row, row)
 
     def get_edges_list(self) -> list[tuple]:
         edge_list = []

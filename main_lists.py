@@ -75,8 +75,32 @@ def teste4():
     simple_graph_using_lists.add_link(3, 5, -1)
     simple_graph_using_lists.add_link(4, 6, 3)
     simple_graph_using_lists.add_link(5, 6, 3)
+    print(simple_graph_using_lists.floyd_warshall())
+
+
+def teste5():
+    simple_graph_using_lists = Graph_Adjacent_List(
+        3, bigraph=True, weighted=True)
+    simple_graph_using_lists.add_link(0, 1, 8)
+    simple_graph_using_lists.add_link(1, 0, 3)
+    simple_graph_using_lists.add_link(0, 2, 5)
+    simple_graph_using_lists.add_link(2, 1, 2)
+
+    simple_graph_using_lists.print_vertex_links(0)
+    print()
+
+    print("\n\n")
+    simple_graph_using_lists.remove_link(0, 0)
+    print("\n\n")
+
+    simple_graph_using_lists.print_vertex_links(0)
+    print()
+    simple_graph_using_lists.BFS(0)
+    simple_graph_using_lists.DFS()
+    simple_graph_using_lists.dijkstra(0)
     print(simple_graph_using_lists.bellman_ford(0))
+    simple_graph_using_lists.floyd_warshall()
 
 
 if __name__ == '__main__':
-    teste4()
+    teste5()
