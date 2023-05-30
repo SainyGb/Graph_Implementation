@@ -240,6 +240,26 @@ class Graph_Adjacent_List():
 
         print(f"Total amount of components: {component_count}")
 
+    def transitive_closure(self):
+        closure_matrix = [[] for row in self.adjacent_list]
+        edge_list = self.get_edges_list()
+
+        for row_idx, _ in enumerate(self.adjacent_list):
+            for col_idx, _ in enumerate(self.adjacent_list):
+                if (row_idx, col_idx) in edge_list:
+                    closure_matrix[row_idx].append(1)
+                else:
+                    closure_matrix[row_idx].append(0)
+
+        for k, _ in enumerate(closure_matrix):
+            for i, _ in enumerate(closure_matrix):
+                for j, _ in enumerate(closure_matrix):
+                    closure_matrix[i][j] = closure_matrix[i][j] or (
+                        closure_matrix[i][k] and closure_matrix[k][j])
+
+        for number_of_row, row in enumerate(closure_matrix):
+            print(number_of_row, row)
+
     def get_edges_list(self) -> list[tuple]:
         edge_list = []
         for vertex, edges in self.adjacent_list.items():

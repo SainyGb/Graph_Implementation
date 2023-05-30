@@ -106,5 +106,20 @@ def teste5():
     simple_graph_using_lists.floyd_warshall()
 
 
+def teste6():
+    simple_graph_using_lists = Graph_Adjacent_List(
+        4)
+    simple_graph_using_lists.add_link(0, 3)
+    simple_graph_using_lists.add_link(1, 0)
+    simple_graph_using_lists.add_link(2, 0)
+    simple_graph_using_lists.add_link(1, 2)
+    simple_graph_using_lists.add_link(3, 2)
+    simple_graph_using_lists.add_link(0, 3)
+    simple_graph_using_lists.add_link(1, 3)
+    simple_graph_using_lists.add_link(2, 3)
+
+    simple_graph_using_lists.transitive_closure()
+
+
 if __name__ == '__main__':
-    teste2()
+    teste6()
