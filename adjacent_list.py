@@ -174,7 +174,7 @@ class Graph_Adjacent_List():
                     visited.add(neighbor)
                     print(
                         f"Vertex: {neighbor} | Distance from Vertex {source_vertex}: {self.vertex_distances[neighbor]} |" +
-                        "Antecessor: {self.vertex_antecessors[neighbor]}")
+                        f"Antecessor: {self.vertex_antecessors[neighbor]}")
 
     def relax(self, vertex1, vertex2):
         if self.vertex_distances[vertex2] > self.vertex_distances[vertex1] + self.edge_weights[(vertex1, vertex2)]:
@@ -188,6 +188,7 @@ class Graph_Adjacent_List():
         self.vertex_antecessors = [None for vertex in self.adjacent_list]
         self.vertex_distances[source_vertex] = 0
         edge_list = self.get_edges_list()
+
         for _ in range(len(self.adjacent_list)-1):
             for edge in edge_list:
                 self.relax(edge[0], edge[1])

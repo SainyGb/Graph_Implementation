@@ -1,4 +1,5 @@
 from math import inf
+import heapq
 
 from vertex_class import Vertex
 
@@ -98,40 +99,48 @@ class Graph_Adjacent_Matrix():
         self.edges_list.remove((vertex2, vertex1))
         return
 
-    def DFS(self):
+    def DFS(self, source=None, verbose=False):
         visited = set()
         antecessors = {}
         vertex_times = {}
         time = 0
 
-        print("Passing through the graph using DFS")
+        if verbose:
+            print("Passing through the graph using DFS")
 
-        for vertex, _ in enumerate(self.adjacent_matrix):
-            if vertex not in visited:
-                time = self.DFS_Aux(vertex=vertex, visited=visited,
-                                    time=time, antecessors=antecessors, vertex_times=vertex_times)
-        print(antecessors)
-        print(vertex_times)
-        print(visited)
-        print()
+        if source is not None:
+            time = self.DFS_Aux(vertex=source, visited=visited,
+                                time=time, antecessors=antecessors, vertex_times=vertex_times, verbose=verbose)
+        else:
+            for vertex, _ in enumerate(self.adjacent_matrix):
+                if vertex not in visited:
+                    time = self.DFS_Aux(vertex=source, visited=visited,
+                                        time=time, antecessors=antecessors, vertex_times=vertex_times, verbose=verbose)
 
-    def DFS_Aux(self, vertex, visited, antecessors, time, vertex_times):
+        if verbose:
+            print(antecessors)
+            print(vertex_times)
+            print(visited)
+            print()
+
+    def DFS_Aux(self, vertex, visited, antecessors, time, vertex_times, verbose):
         visited.add(vertex)
 
         time += 1
         vertex_times[vertex] = [f"init in {time}"]
 
-        if vertex in antecessors.keys():
-            print(
-                f"Time: {time} | Vertex: {vertex} | Antecessor: { antecessors[vertex]}")
-        else:
-            print(f"Time: {time} | Vertex: {vertex} | Antecessor: {None}")
+        if verbose:
+            if vertex in antecessors.keys():
+                print(
+                    f"Time: {time} | Vertex: {vertex} | Antecessor: { antecessors[vertex]}")
+            else:
+                print(f"Time: {time} | Vertex: {vertex} | Antecessor: {None}")
 
         for possible_neighbor, exist in enumerate(self.adjacent_matrix[vertex]):
             if exist is not None and possible_neighbor not in visited:
                 antecessors[possible_neighbor] = vertex
                 time = self.DFS_Aux(vertex=possible_neighbor,
-                                    visited=visited, antecessors=antecessors, time=time, vertex_times=vertex_times)
+                                    visited=visited, antecessors=antecessors, time=time, vertex_times=vertex_times, verbose=verbose)
         time += 1
         vertex_times[vertex].append(f"finalized in {time}")
         return time
@@ -173,21 +182,32 @@ class Graph_Adjacent_Matrix():
         self.vertex_antecessors = [None for vertex in self.vertex_list]
         self.vertex_distances[source_vertex] = 0
 
-        vertex_list = self.vertex_list[:]
+        visited = set()
+        visited.add(source_vertex)
+
+        queue = []
+        heapq.heappush(queue, (0, source_vertex))
         print(
             "Getting the distances using Djikstra")
         print(f"Starting vertex: {source_vertex}")
 
-        while vertex_list:
-            min_vertex = vertex_list.pop(vertex_list.index(min(vertex_list)))
+        while queue:
+            weight_min_vertex, min_vertex = heapq.heappop(queue)
             for neighbor in self.get_vertex_links(min_vertex):
-                self.relax(min_vertex, neighbor)
-                # if vertex_distances[neighbor] > vertex_distances[min_vertex] + self.adjacent_matrix[min_vertex][neighbor]:
-                #     vertex_distances[neighbor] = vertex_distances[min_vertex] + \
-                #         self.adjacent_matrix[min_vertex][neighbor]
-                #     vertex_antecessors[neighbor] = min_vertex
+                relax = self.relax(min_vertex, neighbor)
+                heapq.heappush(
+                    queue, (self.vertex_distances[relax], relax))
+                visited.add(neighbor)
                 print(
-                    f"Vertex: {neighbor} | Distance from Vertex {source_vertex}: {self.vertex_distances[neighbor]} | Antecessor: {self.vertex_antecessors[neighbor]}")
+                    f"Vertex: {neighbor} | Distance from Vertex {source_vertex}: {self.vertex_distances[neighbor]} |" +
+                    f"Antecessor: {self.vertex_antecessors[neighbor]}")
+
+    def relax(self, vertex1, vertex2):
+        if self.vertex_distances[vertex2] > self.vertex_distances[vertex1] + self.adjacent_matrix[vertex1][vertex2]:
+            self.vertex_distances[vertex2] = self.vertex_distances[vertex1] + \
+                self.adjacent_matrix[vertex1][vertex2]
+            self.vertex_antecessors[vertex2] = vertex1
+            return vertex2
 
     def bellman_ford(self, source_vertex):
         self.vertex_distances = [inf for vertex in self.vertex_list]
@@ -215,22 +235,34 @@ class Graph_Adjacent_Matrix():
                 elif value is None:
                     aux_matrix[row_idx][col_idx] = inf
 
+        for number_of_row, row in enumerate(aux_matrix):
+            print(number_of_row, row)
+        print()
+
         for k, _ in enumerate(aux_matrix):
-            for v, _ in enumerate(aux_matrix):
-                for aux, _ in enumerate(aux_matrix):
-                    if aux_matrix[k][aux] is not None and aux_matrix[v][k] is not None:
-                        if (aux_matrix[v][k] + aux_matrix[k][aux] < aux_matrix[v][aux]):
-                            aux_matrix[v][aux] = aux_matrix[v][k] + \
-                                aux_matrix[k][aux]
-                            self.vertex_antecessors[aux] = k
+            for i, _ in enumerate(aux_matrix):
+                for j, _ in enumerate(aux_matrix):
+                    aux_matrix[i][j] = min(aux_matrix[i][j], aux_matrix[i][k] +
+                                           aux_matrix[k][j])
+                    self.vertex_antecessors[j] = k
         print()
         for number_of_row, row in enumerate(aux_matrix):
             print(number_of_row, row)
         print(self.vertex_antecessors)
-        for vertex, antecessor in enumerate(self.vertex_antecessors):
-           # print(
-            #  f"Vertex: {vertex} | Shortest : {self.vertex_antecessors[neighbor]}")
-            pass
+
+    def connected_components(self):
+        visited = set()
+        component_count = 0
+        print("Executing Connected Components Algorithm")
+        for vertex, _ in enumerate(self.adjacent_matrix):
+            if vertex not in visited:
+                visited = visited.union(self.DFS(vertex, verbose=False))
+                component_count += 1
+
+                print(
+                    f"Visited vertex in the {component_count} DFS pass: {visited}")
+
+        print(f"Total amount of components: {component_count}")
 
     def transitive_closure(self):
         closure_matrix = self.adjacent_matrix[:]
@@ -242,12 +274,6 @@ class Graph_Adjacent_Matrix():
 
         for number_of_row, row in enumerate(closure_matrix):
             print(number_of_row, row)
-
-    def relax(self, vertex1, vertex2):
-        if self.vertex_distances[vertex2] > self.vertex_distances[vertex1] + self.adjacent_matrix[vertex1][vertex2]:
-            self.vertex_distances[vertex2] = self.vertex_distances[vertex1] + \
-                self.adjacent_matrix[vertex1][vertex2]
-            self.vertex_antecessors[vertex2] = vertex1
 
     def get_vertex_links(self, vertex):
         count = []
