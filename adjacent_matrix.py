@@ -114,7 +114,7 @@ class Graph_Adjacent_Matrix():
         else:
             for vertex, _ in enumerate(self.adjacent_matrix):
                 if vertex not in visited:
-                    time = self.DFS_Aux(vertex=source, visited=visited,
+                    time = self.DFS_Aux(vertex=vertex, visited=visited,
                                         time=time, antecessors=antecessors, vertex_times=vertex_times, verbose=verbose)
 
         if verbose:
