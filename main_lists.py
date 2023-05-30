@@ -60,7 +60,23 @@ def teste3():
     simple_graph_using_lists.add_link(4, 6, 2)
     simple_graph_using_lists.add_link(5, 6, 6)
     simple_graph_using_lists.dijkstra(0)
+    print(simple_graph_using_lists.bellman_ford(0))
+
+
+def teste4():
+    simple_graph_using_lists = Graph_Adjacent_List(
+        7, bigraph=True, weighted=True)
+    simple_graph_using_lists.add_link(0, 1, 6)
+    simple_graph_using_lists.add_link(0, 2, 5)
+    simple_graph_using_lists.add_link(0, 3, 5)
+    simple_graph_using_lists.add_link(1, 4, -2)
+    simple_graph_using_lists.add_link(2, 4, 1)
+    simple_graph_using_lists.add_link(3, 2, -2)
+    simple_graph_using_lists.add_link(3, 5, -1)
+    simple_graph_using_lists.add_link(4, 6, 3)
+    simple_graph_using_lists.add_link(5, 6, 3)
+    print(simple_graph_using_lists.bellman_ford(0))
 
 
 if __name__ == '__main__':
-    teste3()
+    teste4()

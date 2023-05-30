@@ -173,6 +173,25 @@ class Graph_Adjacent_List():
             self.vertex_antecessors[vertex2] = vertex1
             return vertex2
 
+    def bellman_ford(self, source_vertex):
+        self.vertex_distances = [inf for vertex in self.adjacent_list]
+        self.vertex_antecessors = [None for vertex in self.adjacent_list]
+        self.vertex_distances[source_vertex] = 0
+        edge_list = self.get_edges_list()
+        for _ in range(len(self.adjacent_list)-1):
+            for edge in edge_list:
+                self.relax(edge[0], edge[1])
+        for edge in edge_list:
+            if self.vertex_distances[edge[1]] > self.vertex_distances[edge[0]] + self.edge_weights[(edge[0], edge[1])]:
+                return True
+        return False
+
+    def get_edges_list(self) -> list[tuple]:
+        edge_list = []
+        for vertex, edges in self.adjacent_list.items():
+            edge_list += [(vertex, edge) for edge in edges]
+        return edge_list
+
     def print_vertex(self):
         print(
             f"There are {len(self.adjacent_list.keys())} Vertex \n" +
