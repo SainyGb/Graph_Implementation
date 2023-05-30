@@ -69,40 +69,49 @@ class Graph_Adjacent_List():
                 del self.edge_weights[(vertex2, vertex1)]
                 return
 
-    def DFS(self):
+    def DFS(self, source=None, verbose=False):
         visited = set()
         antecessors = {}
         vertex_times = {}
         time = 0
 
-        print("Passing through the graph using DFS")
+        if verbose:
+            print("Passing through the graph using DFS")
 
-        for vertex in self.adjacent_list:
-            if vertex not in visited:
-                time = self.DFS_Aux(vertex=vertex, visited=visited,
-                                    time=time, antecessors=antecessors, vertex_times=vertex_times)
-        print(antecessors)
-        print(vertex_times)
-        print(visited)
-        print()
+        if source is not None:
+            time = self.DFS_Aux(vertex=source, visited=visited,
+                                time=time, antecessors=antecessors, vertex_times=vertex_times, verbose=verbose)
+        else:
+            for vertex in self.adjacent_list:
+                if vertex not in visited:
+                    time = self.DFS_Aux(vertex=vertex, visited=visited,
+                                        time=time, antecessors=antecessors, vertex_times=vertex_times, verbose=verbose)
 
-    def DFS_Aux(self, vertex, visited, antecessors, time, vertex_times):
+        if verbose:
+            print(antecessors)
+            print(vertex_times)
+            print(visited)
+            print()
+        return visited
+
+    def DFS_Aux(self, vertex, visited, antecessors, time, vertex_times, verbose):
         visited.add(vertex)
 
         time += 1
         vertex_times[vertex] = [f"init in {time}"]
 
-        if vertex in antecessors.keys():
-            print(
-                f"Time: {time} | Vertex: {vertex} | Antecessor: { antecessors[vertex]}")
-        else:
-            print(f"Time: {time} | Vertex: {vertex} | Antecessor: {None}")
+        if verbose:
+            if vertex in antecessors.keys():
+                print(
+                    f"Time: {time} | Vertex: {vertex} | Antecessor: { antecessors[vertex]}")
+            else:
+                print(f"Time: {time} | Vertex: {vertex} | Antecessor: {None}")
 
         for neighbor in self.adjacent_list[vertex]:
             if neighbor not in visited:
                 antecessors[neighbor] = vertex
                 time = self.DFS_Aux(vertex=neighbor,
-                                    visited=visited, antecessors=antecessors, time=time, vertex_times=vertex_times)
+                                    visited=visited, antecessors=antecessors, time=time, vertex_times=vertex_times, verbose=verbose)
         time += 1
         vertex_times[vertex].append(f"finalized in {time}")
         return time
@@ -216,6 +225,20 @@ class Graph_Adjacent_List():
 
         for number_of_row, row in enumerate(aux_matrix):
             print(number_of_row, row)
+
+    def connected_components(self):
+        visited = set()
+        component_count = 0
+        print("Executing Connected Components Algorithm")
+        for vertex, _ in enumerate(self.adjacent_list):
+            if vertex not in visited:
+                visited = visited.union(self.DFS(vertex, verbose=False))
+                component_count += 1
+
+                print(
+                    f"Visited vertex in the {component_count} DFS pass: {visited}")
+
+        print(f"Total amount of components: {component_count}")
 
     def get_edges_list(self) -> list[tuple]:
         edge_list = []

@@ -33,18 +33,21 @@ def teste1():
     simple_graph_using_lists.BFS(0)
     simple_graph_using_lists.DFS()
 
+    simple_graph_using_lists.connected_components()
+
 
 def teste2():
     simple_graph_using_lists = Graph_Adjacent_List(
-        4, bigraph=False, weighted=True)
+        4, bigraph=True, weighted=True)
     simple_graph_using_lists.print_lists()
     simple_graph_using_lists.add_link(0, 1, 2)
-    simple_graph_using_lists.add_link(1, 2, 3)
-    simple_graph_using_lists.add_link(0, 2, 4)
+    simple_graph_using_lists.add_link(1, 0, 3)
+    simple_graph_using_lists.add_link(2, 1, 4)
     simple_graph_using_lists.print_lists()
-    simple_graph_using_lists.DFS()
-    print(simple_graph_using_lists.edge_weights)
-    simple_graph_using_lists.dijkstra(0)
+    # simple_graph_using_lists.DFS()
+    # print(simple_graph_using_lists.edge_weights)
+    # simple_graph_using_lists.dijkstra(0)
+    simple_graph_using_lists.connected_components()
 
 
 def teste3():
@@ -76,6 +79,7 @@ def teste4():
     simple_graph_using_lists.add_link(4, 6, 3)
     simple_graph_using_lists.add_link(5, 6, 3)
     print(simple_graph_using_lists.floyd_warshall())
+    simple_graph_using_lists.connected_components()
 
 
 def teste5():
@@ -103,4 +107,4 @@ def teste5():
 
 
 if __name__ == '__main__':
-    teste5()
+    teste2()
